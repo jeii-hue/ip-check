@@ -1,0 +1,316 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>Personal IP Self-Check</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Inter:wght@400;500;700&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+  :root{
+    --bg:#f4f2ee; --surface:#ffffff; --surface-2:#faf8f4;
+    --ink:#221f1b; --muted:#6c665d; --faint:#938c82; --line:#e6e1d8;
+    --accent:#e0426a; --accent-ink:#b02a50; --accent-soft:#fbe6ec;
+    --learn:#2f5bff; --learn-bg:#e8ecff;
+    --grow:#1a9b6a; --grow-bg:#e1f3ec;
+    --praise:#bd7f13; --praise-bg:#f8eed8;
+    --shadow:0 1px 2px rgba(40,30,20,.04),0 6px 20px rgba(40,30,20,.06);
+  }
+  @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+    --bg:#161418; --surface:#201d24; --surface-2:#262230;
+    --ink:#ece8e2; --muted:#a69f95; --faint:#7d766c; --line:#332e3a;
+    --accent:#ff6088; --accent-ink:#ff87a4; --accent-soft:#3a2029;
+    --learn:#87a0ff; --learn-bg:#1d2340; --grow:#54d39d; --grow-bg:#123026;
+    --praise:#e4b34f; --praise-bg:#332815;
+    --shadow:0 1px 2px rgba(0,0,0,.3),0 8px 24px rgba(0,0,0,.35);
+  }}
+  :root[data-theme="dark"]{
+    --bg:#161418; --surface:#201d24; --surface-2:#262230;
+    --ink:#ece8e2; --muted:#a69f95; --faint:#7d766c; --line:#332e3a;
+    --accent:#ff6088; --accent-ink:#ff87a4; --accent-soft:#3a2029;
+    --learn:#87a0ff; --learn-bg:#1d2340; --grow:#54d39d; --grow-bg:#123026;
+    --praise:#e4b34f; --praise-bg:#332815;
+    --shadow:0 1px 2px rgba(0,0,0,.3),0 8px 24px rgba(0,0,0,.35);
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);
+    font-family:"Inter",system-ui,sans-serif;line-height:1.7;
+    -webkit-font-smoothing:antialiased;font-size:16px}
+  .wrap{max-width:720px;margin:0 auto;padding:clamp(20px,5vw,52px) clamp(16px,4vw,32px)}
+  .serif{font-family:"Fraunces",Georgia,serif}
+  .mono{font-family:"IBM Plex Mono",monospace}
+  header{border-bottom:2px solid var(--ink);padding-bottom:20px;margin-bottom:12px}
+  .eyebrow{font-family:"IBM Plex Mono",monospace;font-size:12px;letter-spacing:.22em;
+    text-transform:uppercase;color:var(--accent);font-weight:500;margin:0 0 12px}
+  h1{font-family:"Fraunces",serif;font-weight:700;font-size:clamp(28px,6vw,40px);
+    line-height:1.14;margin:0 0 12px;letter-spacing:-.01em}
+  .lede{color:var(--muted);font-size:15px;margin:0}
+  .step{font-family:"IBM Plex Mono",monospace;font-size:12.5px;letter-spacing:.18em;
+    text-transform:uppercase;color:var(--faint);margin:34px 0 4px;display:flex;align-items:center;gap:12px}
+  .step::after{content:"";flex:1;height:1px;background:var(--line)}
+  .step-note{font-size:13px;color:var(--faint);margin:0 0 14px}
+  .q{background:var(--surface);border:1px solid var(--line);border-radius:14px;
+    padding:18px 18px 16px;margin-bottom:14px;box-shadow:var(--shadow)}
+  .q-t{font-weight:700;font-size:15.5px;margin:0 0 13px;line-height:1.5}
+  .opts{display:flex;flex-wrap:wrap;gap:8px}
+  .opt{border:1px solid var(--line);background:var(--surface-2);border-radius:10px;
+    padding:9px 13px;font-size:14px;cursor:pointer;user-select:none;transition:.12s;line-height:1.35;color:var(--ink)}
+  .opt:hover{border-color:var(--accent)}
+  .opt.sel{background:var(--accent);border-color:var(--accent);color:#fff;font-weight:500}
+  .opt:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+  .scale .opt{flex:1;text-align:center;min-width:88px}
+  .fill{margin-top:10px;width:100%;border:1px solid var(--line);background:var(--surface-2);
+    color:var(--ink);border-radius:10px;padding:10px 12px;font:inherit;font-size:14px}
+  .fill:focus{outline:2px solid var(--accent);outline-offset:1px;border-color:var(--accent)}
+  .fill[hidden]{display:none}
+  .bar{position:sticky;bottom:0;background:linear-gradient(to top,var(--bg) 70%,transparent);
+    padding:18px 0 8px;margin-top:10px;display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+  .btn{font:inherit;font-weight:700;font-size:15px;border:none;border-radius:12px;padding:13px 22px;
+    cursor:pointer;background:var(--accent);color:#fff;transition:.12s}
+  .btn:hover{filter:brightness(1.05)}.btn:disabled{opacity:.5;cursor:default}
+  .btn.ghost{background:transparent;color:var(--accent);border:1px solid var(--line)}
+  .progress{font-size:13px;color:var(--muted)}
+  .progress b{color:var(--ink)}
+  #result{margin-top:26px}
+  .sheet{background:var(--surface);border:1px solid var(--line);border-radius:18px;
+    overflow:hidden;box-shadow:var(--shadow)}
+  .sheet-top{background:var(--accent);color:#fff;padding:22px 24px}
+  .sheet-top .k{font-family:"IBM Plex Mono",monospace;font-size:11.5px;letter-spacing:.2em;text-transform:uppercase;opacity:.9}
+  .sheet-top h2{font-family:"Fraunces",serif;margin:6px 0 0;font-size:25px;font-weight:700;line-height:1.25}
+  .sheet-body{padding:8px 24px 24px}
+  .blk{padding:17px 0;border-bottom:1px dashed var(--line)}
+  .blk:last-child{border-bottom:none}
+  .blk h3{margin:0 0 9px;font-size:13px;font-weight:700;letter-spacing:.03em;color:var(--accent-ink);
+    display:flex;align-items:center;gap:8px}
+  .blk p{margin:0;font-size:15px}
+  .chips{display:flex;flex-wrap:wrap;gap:8px}
+  .chip{background:var(--accent-soft);color:var(--accent-ink);border-radius:20px;padding:5px 13px;font-size:14px;font-weight:600}
+  .mem{display:flex;flex-direction:column;gap:7px}
+  .mem div{font-size:14.5px}.mem b{color:var(--ink)}
+  ol.acts{margin:0;padding-left:20px;display:flex;flex-direction:column;gap:7px;font-size:14.5px}
+  .route{display:inline-block;background:var(--learn-bg);color:var(--learn);font-weight:700;
+    padding:3px 12px;border-radius:8px;font-size:14px;margin-bottom:6px}
+  .enc{background:var(--grow-bg);color:var(--grow);border-radius:10px;padding:12px 15px;font-size:14.5px;font-weight:500;margin-top:4px}
+  .score-wrap{margin-top:18px;background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:18px 20px;box-shadow:var(--shadow)}
+  .score-head{display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin-bottom:14px;flex-wrap:wrap}
+  .score-head .t{font-family:"Fraunces",serif;font-weight:700;font-size:18px}
+  .band{font-weight:700;font-size:14px;padding:4px 12px;border-radius:20px}
+  .score-row{display:grid;grid-template-columns:1fr auto;gap:8px;align-items:center;padding:7px 0;border-top:1px solid var(--line);font-size:14.5px}
+  .score-row:first-of-type{border-top:none}
+  .mk{font-family:"IBM Plex Mono",monospace;font-weight:500;font-size:15px}
+  .mk.g{color:var(--grow)}.mk.y{color:var(--praise)}.mk.r{color:var(--accent)}
+  .src{font-size:12px;color:var(--faint);margin-top:10px;text-align:center}
+  .toast{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);background:var(--ink);color:var(--bg);
+    padding:10px 18px;border-radius:10px;font-size:14px;box-shadow:var(--shadow);opacity:0;transition:.2s;pointer-events:none}
+  .toast.show{opacity:1}
+  [hidden]{display:none!important}
+</style></head><body>
+
+<div class="wrap">
+  <header>
+    <p class="eyebrow">Hello Star Academy · Personal IP</p>
+    <h1>Find your standout IP</h1>
+    <p class="lede">10 minutes, all tap-to-choose — whether you've already started posting or <b>haven't posted a thing yet</b>. The moment you finish it builds your <b>IP Sheet</b> + a sharpness scorecard — telling you which point to amplify and what to do first. (No login, no waiting.)</p>
+  </header>
+
+  <p class="step">Part 1 · Dig for material ⛏️</p>
+  <p class="step-note">Go with your gut — no right answers. I'll mark the ones where you can pick several.</p>
+  <div id="p1"></div>
+
+  <p class="step">Part 2 · Score your sharpness 📊</p>
+  <p class="step-note">Haven't started posting yet? No problem — answer for what you already have, or what you have in mind.</p>
+  <div id="p2"></div>
+
+  <div class="bar">
+    <button class="btn" id="go">✨ Build my IP Sheet</button>
+    <span class="progress" id="prog"></span>
+  </div>
+
+  <div id="result" hidden></div>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+const P1=[
+ {id:"q1",t:"Your main role / angle?",type:"single",opts:["Manager / team lead","Individual contributor","Founder / business owner","Finance / banking","Sales / BD","HR / people","Tech / engineering","Marketing / creative","Consultant / freelance","Student / early career"],other:"Other — type it"},
+ {id:"q2",t:"What are you like in front of a camera / an audience?",type:"single",opts:["Introvert — being visible drains me","Lean introvert, I can manage","Lean extrovert, fairly comfortable","Extrovert — I love the spotlight"]},
+ {id:"q3",t:"What do people most often mention / tease / praise you for?",sub:"pick several",type:"multi",opts:["My look / style","My accent / way of speaking","A catchphrase I repeat","Humour / reactions","A habit or quirk","My expertise / track record","No one's mentioned one yet"],other:"Other — type it"},
+ {id:"qstyle",t:"Do you have a signature look / consistent style?",sub:"colour · outfit · hair · a prop",type:"single",opts:["Yes, very consistent","A little","Not yet"],otherAt:0,otherPh:"Your signature look is… (e.g. always a navy blazer)"},
+ {id:"qline",t:"Your catchphrase / a line you often say?",type:"text",ph:"Leave blank if none; e.g. 'Let's make the numbers make sense.'"},
+ {id:"q4",t:"What topic could you talk about forever?",sub:"pick 1–2",type:"multi",opts:["My field / expertise","Career growth","Leadership / management","Productivity / tools","Industry trends","Data / analysis","Communication / people","Entrepreneurship"],other:"Other — type it"},
+ {id:"q5",t:"Do you have a 'contrast' (something unexpected)?",type:"single",opts:["Yes, a clear contrast","Maybe a little","Haven't thought about it"],otherAt:0,otherPh:"Your contrast is… (e.g. a banker who's hilarious)"},
+ {id:"q6",t:"What shows up most in your comments / DMs / feedback (or what would you expect)?",sub:"pick several",type:"multi",opts:["Praise my look / voice","Ask how-to questions","Ask about career / opportunities","'Me too' — they relate","Find me funny","Rarely get engagement","Haven't posted yet"]},
+ {id:"q7",t:"Which direction do you want to lead with?",sub:"pick 1–2 · your professional brand",type:"multi",opts:["Teach my expertise (how-to)","Share career lessons","Thought leadership / opinions","Behind-the-scenes of my work","Personal story + growth","Industry commentary","Build authority to win clients/roles","Build a side business"],other:"Other — type it"},
+ {id:"q8",t:"In one line: you most want to be known as 'the ___ person'?",type:"text",ph:"e.g. the finance person who makes money make sense"}
+];
+const CRIT=[
+ {id:"label",name:"Label / hook",q:"① Do you have a name / tagline / one-line positioning for yourself — even just planned?",opts:[["Yes, clear",2],["A rough idea",1],["Not yet",0]],adv:"Decide a fixed name / tagline / one-line positioning and put it in your bio + the start of everything you post."},
+ {id:"line",name:"Catchphrase / open",q:"② Do you have a line you'd repeat / a go-to opening — or one in mind?",opts:[["Yes",2],["Maybe one",1],["Not yet",0]],adv:"Pick one line to use as your opening or closing signature every time.",fillId:"qline",fillMin:1,fillPh:"Nice — type the line you'd open (or close) with…"},
+ {id:"visual",name:"Visual signature",q:"③ Do you have a consistent look / visual you'd use (or plan to)?",opts:[["Yes, locked",2],["A vague idea",1],["Not yet",0]],adv:"Lock one colour / outfit / caption / opening frame so people recognise you instantly."},
+ {id:"stance",name:"Point of view",q:"④ Is it clear who you are and what you'd want to be known for?",opts:[["Very clear",2],["Fuzzy",1],["Not yet",0]],adv:"Write one line of your POV: where you stand and what you're about."},
+ {id:"format",name:"Fixed format",q:"⑤ Do you have a repeatable format in mind — how each piece would be built?",opts:[["Yes",2],["Sort of",1],["Not yet",0]],adv:"Lock one structure (checklist / how-to / teardown) and repeat it every time."},
+ {id:"real",name:"Authentic base",q:"⑥ Would the style you're imagining feel natural to keep up — not forced?",opts:[["Yes, sustainable",2],["A bit tiring",1],["Not sure",0]],adv:"Build around your most natural self — don't force a persona, or you won't last."},
+ {id:"extend",name:"Can it grow",q:"⑦ Could your angle grow into a series / product / service?",opts:[["Yes, I have ideas",2],["Maybe",1],["Not yet",0]],adv:"Think about whether your angle can grow into a series, product or service."}
+];
+const state={};try{Object.assign(state,JSON.parse(localStorage.getItem("ipq_en")||"{}"))}catch(e){}
+function save(){try{localStorage.setItem("ipq_en",JSON.stringify(state))}catch(e){}}
+function el(tag,cls,html){const e=document.createElement(tag);if(cls)e.className=cls;if(html!=null)e.innerHTML=html;return e;}
+
+function renderP1(){
+ const root=document.getElementById("p1");
+ P1.forEach(q=>{
+  const card=el("div","q");
+  card.append(el("p","q-t",q.t+(q.sub?` <span class="mono" style="color:var(--faint);font-size:12px">· ${q.sub}</span>`:"")));
+  if(q.type==="text"){
+   const inp=el("input","fill");inp.placeholder=q.ph||"";inp.value=state[q.id]||"";
+   inp.oninput=()=>{state[q.id]=inp.value;save()};
+   card.append(inp);root.append(card);return;
+  }
+  const wrap=el("div","opts");
+  const fb=el("input","fill");fb.placeholder=q.otherPh||"Type it…";fb.hidden=true;fb.value=state[q.id+"_o"]||"";
+  fb.oninput=()=>{state[q.id+"_o"]=fb.value;save()};
+  const refreshFill=()=>{
+   let on=false;
+   if(q.other){on=q.type==="single"?state[q.id]===q.other:(state[q.id]||[]).includes(q.other);}
+   if(q.otherAt!=null){on=on||state[q.id]===q.opts[q.otherAt];}
+   fb.hidden=!on;
+  };
+  const all=q.opts.concat(q.other?[q.other]:[]);
+  all.forEach(o=>{
+   const op=el("div","opt",o);op.tabIndex=0;op.dataset.v=o;
+   const sel=()=>{
+    if(q.type==="single"){state[q.id]=o;[...wrap.children].forEach(c=>c.classList.toggle("sel",c.dataset.v===o));}
+    else{const arr=state[q.id]||[];const ix=arr.indexOf(o);if(ix<0)arr.push(o);else arr.splice(ix,1);state[q.id]=arr;op.classList.toggle("sel");}
+    refreshFill();if(!fb.hidden)fb.focus();save();updateProg();
+   };
+   op.onclick=sel;op.onkeydown=e=>{if(e.key===" "||e.key==="Enter"){e.preventDefault();sel();}};
+   const cur=state[q.id];
+   if(q.type==="single"&&cur===o)op.classList.add("sel");
+   if(q.type==="multi"&&Array.isArray(cur)&&cur.includes(o))op.classList.add("sel");
+   wrap.append(op);
+  });
+  card.append(wrap);refreshFill();card.append(fb);root.append(card);
+ });
+}
+function renderP2(){
+ const root=document.getElementById("p2");
+ CRIT.forEach(c=>{
+  const card=el("div","q");
+  card.append(el("p","q-t",c.q));
+  const wrap=el("div","opts scale");
+  let fb=null;
+  if(c.fillId){
+   fb=el("input","fill");fb.placeholder=c.fillPh||"Type it…";fb.value=state[c.fillId]||"";
+   fb.hidden=!((state["s_"+c.id]||0)>=(c.fillMin||2));
+   fb.oninput=()=>{state[c.fillId]=fb.value;save()};
+  }
+  c.opts.forEach(([txt,val])=>{
+   const op=el("div","opt",txt);op.tabIndex=0;
+   const sel=()=>{state["s_"+c.id]=val;[...wrap.children].forEach((ch,i)=>ch.classList.toggle("sel",c.opts[i][1]===val));
+     if(fb){const show=val>=(c.fillMin||2);fb.hidden=!show;if(show)fb.focus();}
+     save();updateProg();};
+   op.onclick=sel;op.onkeydown=e=>{if(e.key===" "||e.key==="Enter"){e.preventDefault();sel();}};
+   if(state["s_"+c.id]===val)op.classList.add("sel");
+   wrap.append(op);
+  });
+  card.append(wrap);if(fb)card.append(fb);root.append(card);
+ });
+}
+function answered(){return CRIT.filter(c=>state["s_"+c.id]!=null).length;}
+function updateProg(){const n=answered();document.getElementById("prog").innerHTML=`Scoring <b>${n}/7</b>${n<7?"":" ✓"}`;}
+
+function scorecard(){return CRIT.map(c=>{const v=state["s_"+c.id];return {id:c.id,name:c.name,v:v==null?null:v,adv:c.adv}});}
+function totalScore(){return CRIT.reduce((a,c)=>a+(state["s_"+c.id]||0),0);}
+function weakest(){return scorecard().filter(x=>x.v!=null).sort((a,b)=>a.v-b.v).slice(0,2);}
+function band(t,n){
+ if(n<7)return{label:"Scoring unfinished",css:"var(--surface-2)",ink:"var(--muted)",tip:`Finish the last ${7-n} in Part 2 for a sharper scorecard.`};
+ if(t>=11)return{label:"🔥 Sharp & ready",css:"var(--grow-bg)",ink:"var(--grow)",tip:"You've got a clear plan — lock it and start posting it as a series."};
+ if(t>=6)return{label:"🌱 Taking shape",css:"var(--praise-bg)",ink:"var(--praise)",tip:"Good start — fill your weakest 2 (usually catchphrase + visual) as you begin."};
+ return{label:"🧭 At the starting line",css:"var(--accent-soft)",ink:"var(--accent-ink)",tip:"Totally fine if you haven't started — pick 1 label + 1 format; that's your first move."};
+}
+
+// ---- combine their answers into the sheet (no AI) ----
+function combine(){
+ const id=state.q1&&state.q1!=="Other — type it"?state.q1:(state.q1_o||"");
+ const traits=(state.q3||[]).filter(x=>x!=="No one's mentioned one yet"&&x!=="Other — type it");
+ if((state.q3||[]).includes("Other — type it")&&state.q3_o)traits.push(state.q3_o);
+ const dirs=(state.q7||[]).filter(x=>x!=="Other — type it");
+ if((state.q7||[]).includes("Other — type it")&&state.q7_o)dirs.push(state.q7_o);
+ const line=state.qline||"";
+ const style=state.qstyle==="Yes, very consistent"?(state.qstyle_o||"your fixed look"):"";
+ const want=(state.q8||"").trim();
+ const labels=[];
+ if(want)labels.push(/^the\b/i.test(want)?want:("the "+want+" person"));
+ if(id&&dirs[0])labels.push(`${id} × ${dirs[0]}`);else if(id)labels.push(`${id} with a brand`);
+ if(traits[0])labels.push(`the very "${traits[0]}" professional`);
+ if(state.q5==="Yes, a clear contrast"&&state.q5_o)labels.push(`the contrast: ${state.q5_o}`);
+ if(line)labels.push(`the "${line}" one`);
+ let route="Amplify the real you + claim a label",reason="Just turn up the real you and attach a memorable label — no need to force an exaggerated character.";
+ const p=state.q2||"";
+ if(p.startsWith("Extrovert")||p.startsWith("Lean extrovert")){route="Real you, turned up";reason="You're comfortable being visible — amplify the real you and add a little performance / character.";}
+ else if(p.startsWith("Introvert")){reason="You lean introverted — real-you + a label is the steadiest, least-draining path, and sustainable long term.";}
+ const core=want||(traits[0]?`your "${traits[0]}"`:"")||(id?`your ${id} angle`:"your single most standout trait");
+ const dirtxt=dirs.length?`Lock your direction to "${dirs.slice(0,2).join(" / ")}"`:"Lock one direction first";
+ const hypothesis=`Make this **one** thing your signature: ${core}. ${dirtxt}. Rather than doing a bit of everything, make it so clearly yours that people think of you the moment it comes up.`;
+ const mem={
+  catchphrase: line?`You already have a line — "${line}". Say it in every piece, at the open or close.`:"Pick a line you'd naturally say and use it every time (your verbal signature).",
+  visual: style?`Your look — "${style}" — is your memory point. Wear / use it every time; don't keep changing it.`:(state.qstyle==="A little"?"Lock that bit of a look (colour / outfit / hair / prop) so it's consistent every time.":"Set a visual signature now: a fixed colour / outfit / opening frame."),
+  format: dirs.length?`Turn "${dirs[0]}" into a fixed structure (checklist / how-to / teardown) and do it the same way every time.`:"Lock one structure (checklist / how-to / reaction) and repeat it."
+ };
+ const acts=weakest().map(x=>x.adv);
+ while(acts.length<2)acts.push(["Decide a fixed label and put it in your bio.","Lock one opening line / catchphrase.","Lock one content structure."][acts.length]);
+ acts.push(dirs.length?`Post 5 pieces on "${dirs[0]}" to establish your label.`:"Post 5 pieces on one topic to establish your label.");
+ return {label_candidates:labels.slice(0,4),hypothesis,route,route_reason:reason,memory:mem,actions:acts.slice(0,3),
+  encourage:"A sharp IP isn't built in one shot — each piece just needs to look a little more like you. Start now 💪"};
+}
+
+let lastSheet=null;
+function renderSheet(d){
+ lastSheet=d;
+ const r=document.getElementById("result");r.hidden=false;
+ const labels=(d.label_candidates||[]).map(x=>`<span class="chip">${esc(x)}</span>`).join("");
+ const acts=(d.actions||[]).map(a=>`<li>${esc(a)}</li>`).join("");
+ const mem=d.memory||{};
+ r.innerHTML=`
+  <div class="sheet">
+   <div class="sheet-top"><div class="k">My IP Sheet</div><h2>${esc((d.label_candidates&&d.label_candidates[0])||"Your standout IP")}</h2></div>
+   <div class="sheet-body">
+    <div class="blk"><h3>🔖 Label options</h3><div class="chips">${labels||'<span class="chip">Go back and fill Part 1 😄</span>'}</div></div>
+    <div class="blk"><h3>🎯 Your signature bet</h3><p>${fmt(d.hypothesis||"")}</p></div>
+    <div class="blk"><h3>🧭 Suggested route</h3><span class="route">${esc(d.route||"")}</span><p>${esc(d.route_reason||"")}</p></div>
+    <div class="blk"><h3>⚡ Memory hooks</h3><div class="mem">
+      <div><b>Catchphrase / open:</b> ${esc(mem.catchphrase||"—")}</div>
+      <div><b>Visual signature:</b> ${esc(mem.visual||"—")}</div>
+      <div><b>Fixed format:</b> ${esc(mem.format||"—")}</div></div></div>
+    <div class="blk"><h3>✅ 3 things this week</h3><ol class="acts">${acts}</ol></div>
+    <div class="blk"><div class="enc">💛 ${esc(d.encourage)}</div></div>
+   </div>
+  </div>
+  ${scoreHTML()}
+  <div class="bar"><button class="btn ghost" id="copy">📋 Copy result</button><button class="btn ghost" id="regen">↻ Changed answers? Rebuild</button></div>
+  <p class="src">Auto-built from your answers · no AI used · edit answers & rebuild anytime</p>`;
+ document.getElementById("copy").onclick=copyOut;
+ document.getElementById("regen").onclick=()=>{renderSheet(combine());};
+ r.scrollIntoView({behavior:"smooth",block:"start"});
+}
+function scoreHTML(){
+ const t=totalScore(),n=answered(),b=band(t,n);
+ const rows=scorecard().map(x=>{
+  const m=x.v==null?["—",""]:x.v===2?["✅","g"]:x.v===1?["⚠️","y"]:["❌","r"];
+  return `<div class="score-row"><span>${x.name}</span><span class="mk ${m[1]}">${m[0]}</span></div>`;
+ }).join("");
+ return `<div class="score-wrap">
+  <div class="score-head"><span class="t">Sharpness Scorecard</span><span class="band" style="background:${b.css};color:${b.ink}">${b.label}${n===7?` · ${t}/14`:""}</span></div>
+  ${rows}
+  <p style="margin:12px 0 0;font-size:13.5px;color:var(--muted)">👉 ${b.tip}</p></div>`;
+}
+function esc(s){return String(s==null?"":s).replace(/[&<>]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;"}[c]));}
+function fmt(s){return esc(s).replace(/\*\*(.+?)\*\*/g,"<b>$1</b>");}
+
+function copyOut(){
+ const d=lastSheet||{};const t=totalScore(),n=answered();
+ const txt=`[My IP Sheet]\nLabel options: ${(d.label_candidates||[]).join(" / ")}\nSignature bet: ${(d.hypothesis||"").replace(/\*\*/g,"")}\nSuggested route: ${d.route||""} (${d.route_reason||""})\nMemory hooks:\n· Catchphrase = ${(d.memory||{}).catchphrase||""}\n· Visual = ${(d.memory||{}).visual||""}\n· Format = ${(d.memory||{}).format||""}\n3 things this week:\n1. ${(d.actions||[])[0]||""}\n2. ${(d.actions||[])[1]||""}\n3. ${(d.actions||[])[2]||""}\nSharpness: ${n===7?t+"/14":"("+n+"/7 unfinished)"}`;
+ navigator.clipboard?.writeText(txt).then(()=>toast("Copied! Paste it to share ✅")).catch(()=>toast("Copy failed — select it manually"));
+}
+let toastT;function toast(m){const e=document.getElementById("toast");e.textContent=m;e.classList.add("show");clearTimeout(toastT);toastT=setTimeout(()=>e.classList.remove("show"),2200);}
+
+renderP1();renderP2();updateProg();
+document.getElementById("go").onclick=()=>renderSheet(combine());
+</script>
+</body></html>
